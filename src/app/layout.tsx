@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
+import { CustomCursor } from "@/components/CustomCursor";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,13 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Krish — Personal Website",
+  title: "Krishank D Boswan — GenAI Engineer & Builder",
   description:
-    "Personal website of Krish — developer, creator, and builder. Explore my work, blogs, and connect with me.",
-  keywords: ["developer", "portfolio", "personal website", "blogs"],
+    "Personal website of Krishank D Boswan — GenAI Intern @ Persistent Systems. Building next-generation AI interfaces, scalable architectures, and refined digital products.",
+  keywords: ["Krishank D Boswan", "GenAI", "Persistent Systems", "AI Engineer", "Next.js", "Portfolio"],
   openGraph: {
-    title: "Krish — Personal Website",
-    description: "Developer, creator, and builder.",
+    title: "Krishank D Boswan — GenAI Engineer & Builder",
+    description: "GenAI Intern @ Persistent Systems. Explore resume and journey.",
     type: "website",
   },
 };
@@ -37,7 +38,8 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#0A0A0A] text-white">
+        <CustomCursor />
         <Navbar />
         <main className="flex-1">{children}</main>
       </body>
