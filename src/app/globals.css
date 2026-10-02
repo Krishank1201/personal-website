@@ -1,0 +1,99 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ──────────────────────────────────────────── */
+:root {
+  --bg:      #0A0A0A;
+  --fg:      #FFFFFF;
+  --accent:  #FF5A1F;
+  --accent-muted: rgba(255, 90, 31, 0.15);
+  --glass-bg: rgba(10, 10, 10, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.10);
+  --nav-height: 64px;
+}
+
+/* ─── Tailwind Theme Extension ───────────────────────────────── */
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--fg);
+  --color-accent:     var(--accent);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* ─── Base Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-geist-sans), 'Inter', system-ui, sans-serif;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ─── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* ─── Glassmorphism Utility ──────────────────────────────────── */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* ─── Accent Gradient Text ───────────────────────────────────── */
+.gradient-text {
+  background: linear-gradient(135deg, var(--accent), #ff8c5a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow Effect ────────────────────────────────────────────── */
+.glow {
+  box-shadow: 0 0 24px rgba(255, 90, 31, 0.35), 0 0 8px rgba(255, 90, 31, 0.20);
+}
+
+/* ─── Nav Link Underline Animation ──────────────────────────── */
+.nav-link {
+  position: relative;
+  color: rgba(255,255,255,0.7);
+  transition: color 0.2s ease;
+}
+.nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent);
+  transition: width 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+.nav-link:hover {
+  color: var(--fg);
+}
+.nav-link:hover::after {
+  width: 100%;
+}
