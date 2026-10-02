@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { Magnetic } from "@/components/MagneticButton";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useState } from "react";
 
@@ -185,54 +186,58 @@ export function Hero() {
               className="flex flex-wrap items-center gap-4 sm:gap-5 w-full sm:w-auto"
             >
               {/* Primary Glassmorphic CTA: Explore Resume */}
-              <Link
-                href="/resume"
-                id="hero-explore-resume-btn"
-                className="group relative inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white overflow-hidden transition-all duration-300"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(255, 90, 31, 0.85) 0%, rgba(255, 60, 0, 0.95) 100%)",
-                  border: "1px solid rgba(255, 255, 255, 0.25)",
-                  boxShadow:
-                    "0 8px 30px rgba(255, 90, 31, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.35)",
-                  backdropFilter: "blur(16px)",
-                }}
-              >
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              <Magnetic strength={0.3}>
+                <Link
+                  href="/resume"
+                  id="hero-explore-resume-btn"
+                  className="group relative inline-flex items-center justify-center gap-2.5 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white overflow-hidden transition-all duration-300"
                   style={{
                     background:
-                      "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
+                      "linear-gradient(135deg, rgba(255, 90, 31, 0.85) 0%, rgba(255, 60, 0, 0.95) 100%)",
+                    border: "1px solid rgba(255, 255, 255, 0.25)",
+                    boxShadow:
+                      "0 8px 30px rgba(255, 90, 31, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.35)",
+                    backdropFilter: "blur(16px)",
                   }}
-                />
-                <DocumentIcon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
-                <span>Explore Resume</span>
-                <span
-                  aria-hidden="true"
-                  className="transition-transform duration-300 group-hover:translate-x-1"
                 >
-                  →
-                </span>
-              </Link>
+                  <div
+                    className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent)",
+                    }}
+                  />
+                  <DocumentIcon className="w-4 h-4 transition-transform duration-300 group-hover:scale-110" />
+                  <span>Explore Resume</span>
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                </Link>
+              </Magnetic>
 
               {/* Secondary Glassmorphic CTA: Read Journey */}
-              <Link
-                href="/blogs"
-                id="hero-read-journey-btn"
-                className="group relative inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white/90 overflow-hidden transition-all duration-300"
-                style={{
-                  background: "rgba(255, 255, 255, 0.04)",
-                  border: "1px solid rgba(255, 255, 255, 0.12)",
-                  boxShadow:
-                    "0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
-                  backdropFilter: "blur(20px)",
-                }}
-              >
-                <span className="transition-colors duration-300 group-hover:text-white">
-                  Read Journey
-                </span>
-                <ArrowRightUpIcon className="w-4 h-4 text-white/60 transition-all duration-300 group-hover:text-orange-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-              </Link>
+              <Magnetic strength={0.3}>
+                <Link
+                  href="/blogs"
+                  id="hero-read-journey-btn"
+                  className="group relative inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 rounded-xl font-semibold text-sm sm:text-base text-white/90 overflow-hidden transition-all duration-300"
+                  style={{
+                    background: "rgba(255, 255, 255, 0.04)",
+                    border: "1px solid rgba(255, 255, 255, 0.12)",
+                    boxShadow:
+                      "0 4px 20px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)",
+                    backdropFilter: "blur(20px)",
+                  }}
+                >
+                  <span className="transition-colors duration-300 group-hover:text-white">
+                    Read Journey
+                  </span>
+                  <ArrowRightUpIcon className="w-4 h-4 text-white/60 transition-all duration-300 group-hover:text-orange-400 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                </Link>
+              </Magnetic>
             </motion.div>
 
             {/* Editorial Metadata Strip */}

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { DeepDiveModal, DEEP_DIVES, type DeepDiveData } from "@/components/DeepDiveModal";
+import { Magnetic } from "@/components/MagneticButton";
 
 /* ═══════════════════════════════════════════════════════════════
    ICONS
@@ -866,13 +867,15 @@ export default function ResumePage() {
         <section aria-label="Resume details">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-lg sm:text-xl font-bold text-white">Details</h2>
-            <button
-              onClick={toggleAll}
-              className="text-xs font-mono text-zinc-500 hover:text-[#FF5A1F] transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60"
-              aria-label={allOpen ? "Collapse all sections" : "Expand all sections"}
-            >
-              {allOpen ? "Collapse All" : "Expand All"}
-            </button>
+            <Magnetic strength={0.25}>
+              <button
+                onClick={toggleAll}
+                className="text-xs font-mono text-zinc-500 hover:text-[#FF5A1F] transition-colors px-3 py-1.5 rounded-lg hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60 cursor-pointer"
+                aria-label={allOpen ? "Collapse all sections" : "Expand all sections"}
+              >
+                {allOpen ? "Collapse All" : "Expand All"}
+              </button>
+            </Magnetic>
           </div>
 
           <div className="space-y-3">
@@ -897,22 +900,24 @@ export default function ResumePage() {
           aria-label="Download resume"
           className="mt-16 sm:mt-20 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6"
         >
-          <a
-            href="/resume.pdf"
-            download="Krishank_D_Boswan_Resume.pdf"
-            id="download-resume-bottom"
-            className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl font-bold text-base text-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
-            style={{
-              background: "linear-gradient(135deg, rgba(255, 90, 31, 0.9) 0%, rgba(255, 60, 0, 1) 100%)",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              boxShadow: "0 8px 32px rgba(255, 90, 31, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
-              backdropFilter: "blur(12px)",
-            }}
-            aria-label="Download resume as PDF"
-          >
-            <DownloadIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-y-0.5" />
-            <span>Download Resume</span>
-          </a>
+          <Magnetic strength={0.3}>
+            <a
+              href="/resume.pdf"
+              download="Krishank_D_Boswan_Resume.pdf"
+              id="download-resume-bottom"
+              className="group inline-flex items-center gap-2.5 px-7 py-4 rounded-2xl font-bold text-base text-white transition-all duration-300 hover:scale-[1.03] active:scale-[0.97]"
+              style={{
+                background: "linear-gradient(135deg, rgba(255, 90, 31, 0.9) 0%, rgba(255, 60, 0, 1) 100%)",
+                border: "1px solid rgba(255, 255, 255, 0.2)",
+                boxShadow: "0 8px 32px rgba(255, 90, 31, 0.3), inset 0 1px 0 rgba(255,255,255,0.3)",
+                backdropFilter: "blur(12px)",
+              }}
+              aria-label="Download resume as PDF"
+            >
+              <DownloadIcon className="w-5 h-5 transition-transform duration-300 group-hover:translate-y-0.5" />
+              <span>Download Resume</span>
+            </a>
+          </Magnetic>
 
           <span className="text-xs font-mono text-zinc-600 uppercase tracking-wider">PDF • Updated Oct 2026</span>
         </motion.section>

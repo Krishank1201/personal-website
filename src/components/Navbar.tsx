@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
 import Link from "next/link";
+import { Magnetic } from "@/components/MagneticButton";
 
 /* ─── Types ──────────────────────────────────────────────────── */
 interface NavLink {
@@ -170,28 +171,30 @@ export function Navbar() {
           {/* ── Right Actions ── */}
           <div className="flex items-center gap-3">
             {/* Download Resume CTA */}
-            <motion.a
-              href="/resume.pdf"
-              download="Krish_Resume.pdf"
-              id="download-resume-btn"
-              className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70"
-              style={{
-                background: "var(--accent)",
-                color: "#fff",
-              }}
-              whileHover={{
-                scale: 1.04,
-                boxShadow: "0 0 22px rgba(255,90,31,0.5)",
-              }}
-              whileTap={{ scale: 0.96 }}
-              initial={{ opacity: 0, x: 12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.35, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-              aria-label="Download Resume PDF"
-            >
-              <DownloadIcon className="w-4 h-4 shrink-0" />
-              <span>Download Resume</span>
-            </motion.a>
+            <Magnetic strength={0.25} className="hidden md:inline-block">
+              <motion.a
+                href="/resume.pdf"
+                download="Krish_Resume.pdf"
+                id="download-resume-btn"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/70"
+                style={{
+                  background: "var(--accent)",
+                  color: "#fff",
+                }}
+                whileHover={{
+                  scale: 1.04,
+                  boxShadow: "0 0 22px rgba(255,90,31,0.5)",
+                }}
+                whileTap={{ scale: 0.96 }}
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.35, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                aria-label="Download Resume PDF"
+              >
+                <DownloadIcon className="w-4 h-4 shrink-0" />
+                <span>Download Resume</span>
+              </motion.a>
+            </Magnetic>
 
             {/* Mobile Hamburger */}
             <motion.button
