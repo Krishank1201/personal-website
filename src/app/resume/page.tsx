@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { DeepDiveModal, DEEP_DIVES, type DeepDiveData } from "@/components/DeepDiveModal";
 
 /* ═══════════════════════════════════════════════════════════════
    ICONS
@@ -108,6 +109,7 @@ interface BentoStat {
   detail: string;
   icon: React.FC<{ className?: string }>;
   accentGlow?: boolean;
+  deepDiveId?: string;
 }
 
 const BENTO_STATS: BentoStat[] = [
@@ -117,6 +119,7 @@ const BENTO_STATS: BentoStat[] = [
     detail: "2026",
     icon: TrophyIcon,
     accentGlow: true,
+    deepDiveId: "grant-winner",
   },
   {
     value: "Top 8%",
@@ -129,12 +132,14 @@ const BENTO_STATS: BentoStat[] = [
     label: "P95 Latency",
     detail: "The Curious Fox",
     icon: ZapIcon,
+    deepDiveId: "curious-fox",
   },
   {
     value: "5×",
     label: "National Hackathon Finalist",
     detail: "Consistent Excellence",
     icon: AwardIcon,
+    deepDiveId: "grant-winner",
   },
 ];
 
@@ -165,37 +170,63 @@ interface AccordionSection {
    ═══════════════════════════════════════════════════════════════ */
 
 /* ─── Glassmorphic Bento Card ─────────────────────────────────── */
-function BentoCard({ stat, index }: { stat: BentoStat; index: number }) {
+function BentoCard({
+  stat,
+  index,
+  onDeepDive,
+}: {
+  stat: BentoStat;
+  index: number;
+  onDeepDive?: (id: string) => void;
+}) {
   const Icon = stat.icon;
+  const isClickable = !!stat.deepDiveId;
+  const Tag = isClickable ? "button" as const : "div" as const;
+
   return (
     <motion.div
+      layoutId={stat.deepDiveId ? `deep-dive-card-${stat.deepDiveId}` : undefined}
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay: 0.1 + index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative rounded-2xl p-6 sm:p-7 overflow-hidden transition-all duration-300 hover:border-orange-500/30"
-      style={{
-        background: "rgba(255, 255, 255, 0.03)",
-        backdropFilter: "blur(16px)",
-        border: "1px solid rgba(255, 255, 255, 0.08)",
-      }}
     >
-      {/* Subtle corner glow on hover */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-500"
-        style={{ background: "radial-gradient(circle, rgba(255, 90, 31, 0.25), transparent 70%)" }}
-      />
+      <Tag
+        className={`group relative w-full text-left rounded-2xl p-6 sm:p-7 overflow-hidden transition-all duration-300 hover:border-orange-500/30 ${
+          isClickable ? "cursor-pointer" : ""
+        }`}
+        style={{
+          background: "rgba(255, 255, 255, 0.03)",
+          backdropFilter: "blur(16px)",
+          border: "1px solid rgba(255, 255, 255, 0.08)",
+        }}
+        {...(isClickable && {
+          onClick: () => onDeepDive?.(stat.deepDiveId!),
+          "aria-label": `Deep dive into ${stat.label}`,
+        })}
+      >
+        {/* Subtle corner glow on hover */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute -top-16 -right-16 w-32 h-32 rounded-full opacity-0 group-hover:opacity-60 transition-opacity duration-500"
+          style={{ background: "radial-gradient(circle, rgba(255, 90, 31, 0.25), transparent 70%)" }}
+        />
 
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <Icon className="w-5 h-5 text-[#FF5A1F] opacity-80" />
-          <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">{stat.detail}</span>
+        <div className="relative z-10">
+          <div className="flex items-start justify-between mb-4">
+            <Icon className="w-5 h-5 text-[#FF5A1F] opacity-80" />
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono uppercase tracking-widest text-zinc-500">{stat.detail}</span>
+              {isClickable && (
+                <span className="text-[9px] font-mono text-[#FF5A1F] opacity-0 group-hover:opacity-100 transition-opacity duration-200">DEEP DIVE →</span>
+              )}
+            </div>
+          </div>
+          <p className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-1 tabular-nums">
+            {stat.value}
+          </p>
+          <p className="text-sm text-zinc-400 font-medium">{stat.label}</p>
         </div>
-        <p className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-1 tabular-nums">
-          {stat.value}
-        </p>
-        <p className="text-sm text-zinc-400 font-medium">{stat.label}</p>
-      </div>
+      </Tag>
     </motion.div>
   );
 }
@@ -445,7 +476,7 @@ function LeetCodeStats() {
 /* ═══════════════════════════════════════════════════════════════
    ACCORDION SECTION DATA
    ═══════════════════════════════════════════════════════════════ */
-function buildAccordionSections(): AccordionSection[] {
+function buildAccordionSections(onOpenDeepDive: (id: string) => void): AccordionSection[] {
   return [
     {
       id: "professional-summary",
@@ -539,81 +570,7 @@ function buildAccordionSections(): AccordionSection[] {
       title: "Projects",
       icon: "🚀",
       content: (
-        <div className="space-y-8">
-          {/* Project 1 */}
-          <div>
-            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-              <div>
-                <h4 className="text-base sm:text-lg font-bold text-white">The AI Graveyard — Startup Idea Evaluator</h4>
-                <p className="text-xs text-zinc-500 font-mono mt-0.5">July 2026</p>
-              </div>
-              <a
-                href="#"
-                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#FF5A1F] hover:text-orange-300 transition-colors group"
-                aria-label="View AI Graveyard on GitHub"
-              >
-                <GithubIcon className="w-3.5 h-3.5" />
-                <span>GitHub</span>
-                <ExternalLinkIcon className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-              </a>
-            </div>
-            <ul className="space-y-3">
-              <Bullet>
-                Designed a <strong className="text-white font-semibold">multi-agent collaboration system</strong> where a boardroom of <strong className="text-white font-semibold">8 autonomous agents</strong> debate, challenge assumptions, and conduct quantitative viability assessments.
-              </Bullet>
-              <Bullet>
-                Architected a <strong className="text-white font-semibold">cyclic DAG execution framework</strong> with dynamic agent selection and shared state evidence to prevent persona redundancy and hallucinations.
-              </Bullet>
-              <Bullet>
-                Implemented <strong className="text-white font-semibold">Kahn&apos;s algorithm</strong> for deterministic agent conflict resolution alongside a weighted confidence scoring model.
-              </Bullet>
-              <Bullet>
-                Engineered a <strong className="text-white font-semibold">hybrid LLM-routing engine</strong> for adaptive reasoning depth and automated fallbacks across rate-limited endpoints.
-              </Bullet>
-            </ul>
-          </div>
-
-          <div className="border-t border-white/5" aria-hidden="true" />
-
-          {/* Project 2 */}
-          <div>
-            <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
-              <div>
-                <h4 className="text-base sm:text-lg font-bold text-white">The Curious Fox — Adaptive AI Learning Ecosystem</h4>
-                <p className="text-xs text-zinc-500 font-mono mt-0.5">Jan 2026 — Present</p>
-              </div>
-              <div className="flex items-center gap-3">
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-[#FF5A1F] hover:text-orange-300 transition-colors group"
-                  aria-label="View Curious Fox on GitHub"
-                >
-                  <GithubIcon className="w-3.5 h-3.5" />
-                  <span>GitHub</span>
-                </a>
-                <a
-                  href="#"
-                  className="inline-flex items-center gap-1.5 text-xs font-mono text-zinc-400 hover:text-white transition-colors group"
-                  aria-label="View Curious Fox live demo"
-                >
-                  <ExternalLinkIcon className="w-3.5 h-3.5" />
-                  <span>Live Demo</span>
-                </a>
-              </div>
-            </div>
-            <ul className="space-y-3">
-              <Bullet>
-                Built an <strong className="text-white font-semibold">adaptive learning platform</strong> categorizing student cognitive archetypes using the <strong className="text-white font-semibold">Felder-Silverman model</strong> and <strong className="text-white font-semibold">Bloom&apos;s Taxonomy</strong> for personalized path generation.
-              </Bullet>
-              <Bullet>
-                Architected a <strong className="text-white font-semibold">dual-agent ecosystem</strong>: &ldquo;Dr. Fox&rdquo; (RAG-based tutor for source-cited Q&amp;A) and &ldquo;Baby Fox&rdquo; (inverted-role agent prompting users to teach via the <strong className="text-white font-semibold">Feynman Technique</strong>).
-              </Bullet>
-              <Bullet>
-                Deployed a <strong className="text-white font-semibold">high-performance RAG pipeline</strong> on FastAPI, Cohere, and Qdrant, reaching <strong className="text-white font-semibold">100% context precision</strong>, <strong className="text-white font-semibold">95% faithfulness</strong>, and a <strong className="text-white font-semibold">P95 latency of 1.58s</strong>.
-              </Bullet>
-            </ul>
-          </div>
-        </div>
+        <ProjectsAccordionContent onDeepDive={onOpenDeepDive} />
       ),
     },
     {
@@ -621,29 +578,7 @@ function buildAccordionSections(): AccordionSection[] {
       title: "Awards & Achievements",
       icon: "🏆",
       content: (
-        <ul className="space-y-3">
-          <Bullet>
-            <strong className="text-white font-semibold">5× National Hackathon Finalist</strong> &amp; <strong className="text-white font-semibold">₹125,000 Total Grant Winner 2026</strong>
-          </Bullet>
-          <Bullet>
-            Presented <strong className="text-white font-semibold">RL based Network Packet Fragmentation and Optimization</strong> | Mi-IRICT, MAHSA University, Malaysia (Nov 2025)
-          </Bullet>
-          <Bullet>
-            Ranked <strong className="text-white font-semibold">Top 8% Worldwide</strong> (70,000+ Competitors) | International Quant Challenge, WorldQuant (May 2025)
-          </Bullet>
-          <Bullet>
-            <strong className="text-white font-semibold">Top 15 of 1,253 Teams</strong>, Special Mention | WitchHunt Hackathon 2026, Hopeworks Foundation (June 2026)
-          </Bullet>
-          <Bullet>
-            <strong className="text-white font-semibold">Runner-Up (Top 6 of 277 Teams)</strong> | EduAIThon 2026, GITAM University (Jan 2026)
-          </Bullet>
-          <Bullet>
-            <strong className="text-white font-semibold">Top 2 of 25 Teams</strong>, Outstanding Project | SuprMentr × NASSCOM Experiential Internship (Oct 2025)
-          </Bullet>
-          <Bullet>
-            Nominated as <strong className="text-white font-semibold">Top Teams by RV University</strong> for Smart India Hackathon × 2 years | RVU SIH Internal Hackathon 2025, 2026
-          </Bullet>
-        </ul>
+        <AwardsAccordionContent onDeepDive={onOpenDeepDive} />
       ),
     },
     {
@@ -698,10 +633,167 @@ function buildAccordionSections(): AccordionSection[] {
 
 
 /* ═══════════════════════════════════════════════════════════════
+   CLICKABLE PROJECT CARDS (inside accordion)
+   ═══════════════════════════════════════════════════════════════ */
+function ProjectCard({
+  id,
+  title,
+  date,
+  links,
+  bullets,
+  onDeepDive,
+}: {
+  id: string;
+  title: string;
+  date: string;
+  links: { label: string; href: string; icon: React.FC<{ className?: string }> }[];
+  bullets: React.ReactNode[];
+  onDeepDive: (id: string) => void;
+}) {
+  return (
+    <motion.div
+      layoutId={`deep-dive-card-${id}`}
+      className="group rounded-xl p-5 sm:p-6 cursor-pointer transition-all duration-300 hover:border-orange-500/25"
+      style={{
+        background: "rgba(255, 255, 255, 0.02)",
+        border: "1px solid rgba(255, 255, 255, 0.06)",
+      }}
+      onClick={() => onDeepDive(id)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onDeepDive(id); } }}
+      aria-label={`Deep dive into ${title}`}
+    >
+      <div className="flex flex-wrap items-start justify-between gap-2 mb-3">
+        <div>
+          <h4 className="text-base sm:text-lg font-bold text-white group-hover:text-orange-100 transition-colors">{title}</h4>
+          <p className="text-xs text-zinc-500 font-mono mt-0.5">{date}</p>
+        </div>
+        <div className="flex items-center gap-3">
+          {links.map((link) => {
+            const LinkIcon = link.icon;
+            return (
+              <span
+                key={link.label}
+                className="inline-flex items-center gap-1.5 text-xs font-mono text-[#FF5A1F]"
+              >
+                <LinkIcon className="w-3.5 h-3.5" />
+                <span>{link.label}</span>
+              </span>
+            );
+          })}
+          <span className="text-[10px] font-mono text-zinc-600 group-hover:text-[#FF5A1F] transition-colors uppercase">
+            Deep Dive →
+          </span>
+        </div>
+      </div>
+      <ul className="space-y-3">
+        {bullets.map((bullet, i) => (
+          <Bullet key={i}>{bullet}</Bullet>
+        ))}
+      </ul>
+    </motion.div>
+  );
+}
+
+function ProjectsAccordionContent({ onDeepDive }: { onDeepDive: (id: string) => void }) {
+  return (
+    <div className="space-y-4">
+      <ProjectCard
+        id="ai-graveyard"
+        title="The AI Graveyard — Startup Idea Evaluator"
+        date="July 2026"
+        links={[{ label: "GitHub", href: "#", icon: GithubIcon }]}
+        onDeepDive={onDeepDive}
+        bullets={[
+          <>
+            Designed a <strong className="text-white font-semibold">multi-agent collaboration system</strong> where a boardroom of <strong className="text-white font-semibold">8 autonomous agents</strong> debate, challenge assumptions, and conduct quantitative viability assessments.
+          </>,
+          <>
+            Architected a <strong className="text-white font-semibold">cyclic DAG execution framework</strong> with dynamic agent selection and shared state evidence to prevent persona redundancy and hallucinations.
+          </>,
+          <>
+            Implemented <strong className="text-white font-semibold">Kahn&apos;s algorithm</strong> for deterministic agent conflict resolution alongside a weighted confidence scoring model.
+          </>,
+          <>
+            Engineered a <strong className="text-white font-semibold">hybrid LLM-routing engine</strong> for adaptive reasoning depth and automated fallbacks across rate-limited endpoints.
+          </>,
+        ]}
+      />
+
+      <ProjectCard
+        id="curious-fox"
+        title="The Curious Fox — Adaptive AI Learning Ecosystem"
+        date="Jan 2026 — Present"
+        links={[
+          { label: "GitHub", href: "#", icon: GithubIcon },
+          { label: "Live Demo", href: "#", icon: ExternalLinkIcon },
+        ]}
+        onDeepDive={onDeepDive}
+        bullets={[
+          <>
+            Built an <strong className="text-white font-semibold">adaptive learning platform</strong> categorizing student cognitive archetypes using the <strong className="text-white font-semibold">Felder-Silverman model</strong> and <strong className="text-white font-semibold">Bloom&apos;s Taxonomy</strong> for personalized path generation.
+          </>,
+          <>
+            Architected a <strong className="text-white font-semibold">dual-agent ecosystem</strong>: &ldquo;Dr. Fox&rdquo; (RAG-based tutor for source-cited Q&amp;A) and &ldquo;Baby Fox&rdquo; (inverted-role agent prompting users to teach via the <strong className="text-white font-semibold">Feynman Technique</strong>).
+          </>,
+          <>
+            Deployed a <strong className="text-white font-semibold">high-performance RAG pipeline</strong> on FastAPI, Cohere, and Qdrant, reaching <strong className="text-white font-semibold">100% context precision</strong>, <strong className="text-white font-semibold">95% faithfulness</strong>, and a <strong className="text-white font-semibold">P95 latency of 1.58s</strong>.
+          </>,
+        ]}
+      />
+    </div>
+  );
+}
+
+function AwardsAccordionContent({ onDeepDive }: { onDeepDive: (id: string) => void }) {
+  return (
+    <ul className="space-y-3">
+      <Bullet>
+        <button
+          onClick={() => onDeepDive("grant-winner")}
+          className="text-left hover:text-[#FF5A1F] transition-colors group/award inline"
+          aria-label="Deep dive into Grant Winner"
+        >
+          <strong className="text-white font-semibold group-hover/award:text-[#FF5A1F] transition-colors">5× National Hackathon Finalist</strong> &amp; <strong className="text-white font-semibold group-hover/award:text-[#FF5A1F] transition-colors">₹125,000 Total Grant Winner 2026</strong>
+          <span className="text-[10px] font-mono text-zinc-600 group-hover/award:text-[#FF5A1F] ml-2 transition-colors">DEEP DIVE →</span>
+        </button>
+      </Bullet>
+      <Bullet>
+        Presented <strong className="text-white font-semibold">RL based Network Packet Fragmentation and Optimization</strong> | Mi-IRICT, MAHSA University, Malaysia (Nov 2025)
+      </Bullet>
+      <Bullet>
+        Ranked <strong className="text-white font-semibold">Top 8% Worldwide</strong> (70,000+ Competitors) | International Quant Challenge, WorldQuant (May 2025)
+      </Bullet>
+      <Bullet>
+        <strong className="text-white font-semibold">Top 15 of 1,253 Teams</strong>, Special Mention | WitchHunt Hackathon 2026, Hopeworks Foundation (June 2026)
+      </Bullet>
+      <Bullet>
+        <strong className="text-white font-semibold">Runner-Up (Top 6 of 277 Teams)</strong> | EduAIThon 2026, GITAM University (Jan 2026)
+      </Bullet>
+      <Bullet>
+        <strong className="text-white font-semibold">Top 2 of 25 Teams</strong>, Outstanding Project | SuprMentr × NASSCOM Experiential Internship (Oct 2025)
+      </Bullet>
+      <Bullet>
+        Nominated as <strong className="text-white font-semibold">Top Teams by RV University</strong> for Smart India Hackathon × 2 years | RVU SIH Internal Hackathon 2025, 2026
+      </Bullet>
+    </ul>
+  );
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
    PAGE COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 export default function ResumePage() {
-  const sections = buildAccordionSections();
+  const [activeDeepDive, setActiveDeepDive] = useState<DeepDiveData | null>(null);
+
+  const onOpenDeepDive = (id: string) => {
+    const data = DEEP_DIVES[id];
+    if (data) setActiveDeepDive(data);
+  };
+
+  const sections = buildAccordionSections(onOpenDeepDive);
   const [openSections, setOpenSections] = useState<Set<string>>(
     new Set(["professional-summary"])
   );
@@ -764,7 +856,7 @@ export default function ResumePage() {
         <section aria-label="Key metrics" className="mb-14 sm:mb-16">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {BENTO_STATS.map((stat, i) => (
-              <BentoCard key={stat.label} stat={stat} index={i} />
+              <BentoCard key={stat.label} stat={stat} index={i} onDeepDive={onOpenDeepDive} />
             ))}
           </div>
         </section>
@@ -828,6 +920,12 @@ export default function ResumePage() {
         {/* Bottom spacer */}
         <div className="h-12" aria-hidden="true" />
       </div>
+
+      {/* ═══ Deep Dive Modal ═══ */}
+      <DeepDiveModal
+        data={activeDeepDive}
+        onClose={() => setActiveDeepDive(null)}
+      />
     </div>
   );
 }
